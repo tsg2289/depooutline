@@ -233,7 +233,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {!editingMatter && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {matters.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -248,10 +248,10 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
             <div
               key={matter.id}
               onClick={() => onMatterSelect(matter)}
-              className={`relative bg-gray-50 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
+              className={`relative bg-white rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg shadow-sm ${
                 selectedMatter?.id === matter.id
-                  ? 'border-indigo-300 shadow-lg ring-2 ring-indigo-100'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-indigo-400 shadow-lg ring-2 ring-indigo-100 bg-indigo-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
               }`}
             >
               <div className="p-4">
