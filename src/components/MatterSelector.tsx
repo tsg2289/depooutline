@@ -279,10 +279,11 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                   <div className="flex items-center gap-1 ml-3">
                     <button
                       onClick={(e) => handleEditClick(e, matter)}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
                       title="Edit matter"
                     >
                       <PencilIcon className="w-4 h-4" />
+                      Edit
                     </button>
                   </div>
                 </div>
