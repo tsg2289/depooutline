@@ -248,10 +248,10 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
             <div
               key={matter.id}
               onClick={() => onMatterSelect(matter)}
-              className={`relative bg-white rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg shadow-sm ${
+              className={`relative bg-white rounded-2xl cursor-pointer transition-all duration-200 hover:shadow-lg shadow-sm ${
                 selectedMatter?.id === matter.id
-                  ? 'border-indigo-400 shadow-lg ring-2 ring-indigo-100 bg-indigo-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                  ? 'shadow-lg ring-2 ring-indigo-200 bg-indigo-50'
+                  : 'hover:shadow-md'
               }`}
             >
               <div className="p-4">
