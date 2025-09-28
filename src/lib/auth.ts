@@ -82,6 +82,18 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    redirect: async ({ url, baseUrl }) => {
+      // If the url is a relative path, make it absolute
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      // If the url is on the same domain, allow it
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      // Otherwise, redirect to the home page
+      return baseUrl;
+    },
   },
   cookies: {
     sessionToken: {
