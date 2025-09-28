@@ -5,7 +5,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { db } from './db';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db),
@@ -21,6 +21,9 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.EMAIL_FROM,
       sendVerificationRequest: async ({ identifier: email, url }) => {
+        if (!resend) {
+          throw new Error('Resend API key not configured');
+        }
         try {
           await resend.emails.send({
             from: process.env.EMAIL_FROM!,
