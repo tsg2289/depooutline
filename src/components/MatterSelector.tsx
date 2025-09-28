@@ -264,7 +264,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
         <div className="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
           <h3 className="text-sm font-medium text-red-900 mb-3">Delete Matter</h3>
           <p className="text-sm text-red-700 mb-4">
-            Are you sure you want to delete "{deletingMatter.title}"? This action cannot be undone and will also delete all associated depositions.
+            Are you sure you want to delete &ldquo;{deletingMatter.title}&rdquo;? This action cannot be undone and will also delete all associated depositions.
           </p>
           <div className="flex gap-2">
             <button

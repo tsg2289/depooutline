@@ -32,7 +32,7 @@ export function DepositionSelector({
       setDepositions([]);
       onDepositionSelect(null);
     }
-  }, [selectedMatter]);
+  }, [selectedMatter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadDepositions = async () => {
     if (!selectedMatter) return;
@@ -331,7 +331,7 @@ export function DepositionSelector({
         <div className="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
           <h3 className="text-sm font-medium text-red-900 mb-3">Delete Deposition</h3>
           <p className="text-sm text-red-700 mb-4">
-            Are you sure you want to delete "{deletingDeposition.title}"? This action cannot be undone.
+            Are you sure you want to delete &ldquo;{deletingDeposition.title}&rdquo;? This action cannot be undone.
           </p>
           <div className="flex gap-2">
             <button
