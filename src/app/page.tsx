@@ -155,14 +155,14 @@ export default function Home() {
       {/* Main Content Container */}
       <div className="max-w-7xl mx-auto container-pad py-6">
         {/* Matter and Deposition Selectors */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-8">
-          <div className="xl:col-span-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 items-start gap-20 md:gap-32 mb-8">
+          <div className="xl:col-span-3">
             <MatterSelector 
               selectedMatter={selectedMatter}
               onMatterSelect={setSelectedMatter}
             />
           </div>
-          <div className="xl:col-span-6">
+          <div className="xl:col-span-9">
             <DepositionSelector
               selectedMatter={selectedMatter}
               selectedDeposition={selectedDeposition}
