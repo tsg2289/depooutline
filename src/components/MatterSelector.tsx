@@ -243,7 +243,63 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 No matters yet. Create your first matter to get started.
               </p>
             </div>
+          ) : selectedMatter ? (
+            // Show only selected matter with change button
+            <div className="space-y-4">
+              <div
+                className="relative bg-white rounded-3xl shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200"
+                style={{
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.1)'
+                }}
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 rounded-full flex-shrink-0 bg-indigo-500" />
+                        <h3 className="text-lg font-bold text-slate-900 truncate">
+                          {selectedMatter.title}
+                        </h3>
+                      </div>
+                      {selectedMatter.description && (
+                        <p className="text-sm text-slate-600 mb-2 line-clamp-2">
+                          {selectedMatter.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="flex items-center gap-1">
+                          {selectedMatter.e2eeEnabled ? '🔒 E2EE' : '📝'} 
+                          {selectedMatter.e2eeEnabled ? 'Enabled' : 'Standard'}
+                        </span>
+                        <span>
+                          Created {new Date(selectedMatter.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 ml-3">
+                      <button
+                        onClick={(e) => handleEditClick(e, selectedMatter)}
+                        className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
+                        title="Edit matter"
+                      >
+                        <PencilIcon className="w-4 h-4" />
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => onMatterSelect(null)}
+                  className="px-4 py-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors text-sm font-medium"
+                >
+                  Change Matter
+                </button>
+              </div>
+            </div>
           ) : (
+            // Show all matters when none selected
             matters.map((matter) => (
             <div
               key={matter.id}
