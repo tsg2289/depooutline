@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PlusIcon, DocumentTextIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, DocumentTextIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { Matter, Deposition } from '@/types';
-import { getMatterDepositions, createDeposition, updateDeposition } from '@/lib/actions/depositions';
+import { getMatterDepositions, createDeposition, updateDeposition, deleteDeposition } from '@/lib/actions/depositions';
 
 interface DepositionSelectorProps {
   selectedMatter: Matter | null;
@@ -22,6 +22,8 @@ export function DepositionSelector({
   const [isCreating, setIsCreating] = useState(false);
   const [editingDeposition, setEditingDeposition] = useState<Deposition | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [deletingDeposition, setDeletingDeposition] = useState<Deposition | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (selectedMatter) {
@@ -88,6 +90,32 @@ export function DepositionSelector({
   const handleEditClick = (e: React.MouseEvent, deposition: Deposition) => {
     e.stopPropagation(); // Prevent deposition selection when clicking edit
     setEditingDeposition(deposition);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, deposition: Deposition) => {
+    e.stopPropagation(); // Prevent deposition selection when clicking delete
+    setDeletingDeposition(deposition);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingDeposition) return;
+    
+    setIsDeleting(true);
+    try {
+      const result = await deleteDeposition(deletingDeposition.id);
+      if (result.success) {
+        await loadDepositions();
+        // Clear selected deposition if it was the one being deleted
+        if (selectedDeposition?.id === deletingDeposition.id) {
+          onDepositionSelect(null);
+        }
+        setDeletingDeposition(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete deposition:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (!selectedMatter) {
@@ -299,7 +327,32 @@ export function DepositionSelector({
         </div>
       )}
 
-      {!editingDeposition && (
+      {deletingDeposition && (
+        <div className="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
+          <h3 className="text-sm font-medium text-red-900 mb-3">Delete Deposition</h3>
+          <p className="text-sm text-red-700 mb-4">
+            Are you sure you want to delete "{deletingDeposition.title}"? This action cannot be undone.
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Deposition'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeletingDeposition(null)}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!editingDeposition && !deletingDeposition && (
         <div className="space-y-8">
           {depositions.length === 0 ? (
             <div className="text-center py-8">
@@ -361,6 +414,14 @@ export function DepositionSelector({
                     >
                       <PencilIcon className="w-4 h-4" />
                       Edit
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteClick(e, deposition)}
+                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
+                      title="Delete deposition"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                      Delete
                     </button>
                   </div>
                 </div>

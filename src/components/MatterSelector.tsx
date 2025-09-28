@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PlusIcon, FolderIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, FolderIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { Matter } from '@/types';
-import { getUserMatters, createMatter, updateMatter } from '@/lib/actions/matters';
+import { getUserMatters, createMatter, updateMatter, deleteMatter } from '@/lib/actions/matters';
 
 interface MatterSelectorProps {
   selectedMatter: Matter | null;
@@ -17,6 +17,8 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   const [isCreating, setIsCreating] = useState(false);
   const [editingMatter, setEditingMatter] = useState<Matter | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [deletingMatter, setDeletingMatter] = useState<Matter | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadMatters();
@@ -73,6 +75,32 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   const handleEditClick = (e: React.MouseEvent, matter: Matter) => {
     e.stopPropagation(); // Prevent matter selection when clicking edit
     setEditingMatter(matter);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, matter: Matter) => {
+    e.stopPropagation(); // Prevent matter selection when clicking delete
+    setDeletingMatter(matter);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingMatter) return;
+    
+    setIsDeleting(true);
+    try {
+      const result = await deleteMatter(deletingMatter.id);
+      if (result.success) {
+        await loadMatters();
+        // Clear selected matter if it was the one being deleted
+        if (selectedMatter?.id === deletingMatter.id) {
+          onMatterSelect(null);
+        }
+        setDeletingMatter(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete matter:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading) {
@@ -232,7 +260,32 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
         </div>
       )}
 
-      {!editingMatter && (
+      {deletingMatter && (
+        <div className="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
+          <h3 className="text-sm font-medium text-red-900 mb-3">Delete Matter</h3>
+          <p className="text-sm text-red-700 mb-4">
+            Are you sure you want to delete "{deletingMatter.title}"? This action cannot be undone and will also delete all associated depositions.
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Matter'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeletingMatter(null)}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!editingMatter && !deletingMatter && (
         <div className="space-y-8">
           {matters.length === 0 ? (
             <div className="text-center py-8">
@@ -284,6 +337,14 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                       >
                         <PencilIcon className="w-4 h-4" />
                         Edit
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteClick(e, selectedMatter)}
+                        className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
+                        title="Delete matter"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -338,6 +399,14 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                     >
                       <PencilIcon className="w-4 h-4" />
                       Edit
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteClick(e, matter)}
+                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
+                      title="Delete matter"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                      Delete
                     </button>
                   </div>
                 </div>
