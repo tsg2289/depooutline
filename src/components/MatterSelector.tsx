@@ -49,7 +49,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
 
   if (isLoading) {
     return (
-      <div className="elevated-card p-6">
+      <div className="elevated-card p-4">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded mb-4"></div>
           <div className="space-y-2">
@@ -62,7 +62,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   }
 
   return (
-    <div className="elevated-card p-6">
+    <div className="elevated-card p-4">
       <div className="mb-4">
         <div className="heading-bar">
           <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
@@ -142,7 +142,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
 
       <div className="space-y-2">
         {matters.length === 0 ? (
-          <p className="text-gray-500 text-sm italic text-center py-4">
+          <p className="text-gray-500 text-sm italic text-center py-2">
             No matters yet. Create your first matter to get started.
           </p>
         ) : (

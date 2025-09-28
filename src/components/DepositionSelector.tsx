@@ -64,7 +64,7 @@ export function DepositionSelector({
 
   if (!selectedMatter) {
     return (
-      <div className="elevated-card p-6">
+      <div className="elevated-card p-4">
         <div className="heading-bar">
           <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
             <DocumentTextIcon className="w-5 h-5" />
@@ -72,7 +72,7 @@ export function DepositionSelector({
           </h2>
         </div>
         <div className="mt-4">
-          <p className="text-gray-500 text-sm italic text-center py-8">
+          <p className="text-gray-500 text-sm italic text-center py-3">
             Please select a matter first to view depositions.
           </p>
         </div>
@@ -82,7 +82,7 @@ export function DepositionSelector({
 
   if (isLoading) {
     return (
-      <div className="elevated-card p-6">
+      <div className="elevated-card p-4">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded mb-4"></div>
           <div className="space-y-2">
@@ -95,7 +95,7 @@ export function DepositionSelector({
   }
 
   return (
-    <div className="elevated-card p-6">
+    <div className="elevated-card p-4">
       <div className="mb-4">
         <div className="heading-bar">
           <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
@@ -192,7 +192,7 @@ export function DepositionSelector({
 
       <div className="space-y-2">
         {depositions.length === 0 ? (
-          <p className="text-gray-500 text-sm italic text-center py-4">
+          <p className="text-gray-500 text-sm italic text-center py-2">
             No depositions yet. Create your first deposition to get started.
           </p>
         ) : (
