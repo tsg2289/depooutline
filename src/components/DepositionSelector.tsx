@@ -300,7 +300,7 @@ export function DepositionSelector({
       )}
 
       {!editingDeposition && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {depositions.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 text-sm italic">
@@ -312,7 +312,7 @@ export function DepositionSelector({
             <div
               key={deposition.id}
               onClick={() => onDepositionSelect(deposition)}
-              className={`relative bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 ${
+              className={`relative bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 ${
                 selectedDeposition?.id === deposition.id
                   ? 'shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200'
                   : 'hover:shadow-xl hover:-translate-y-1'
