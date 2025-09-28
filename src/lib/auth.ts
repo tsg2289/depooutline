@@ -5,7 +5,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import { db } from './db';
 import { Resend } from 'resend';
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const resend = process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_placeholder_for_now' 
+  ? new Resend(process.env.RESEND_API_KEY) 
+  : null;
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db),
