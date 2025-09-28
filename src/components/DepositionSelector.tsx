@@ -299,15 +299,16 @@ export function DepositionSelector({
         </div>
       )}
 
-      <div className="space-y-3">
-        {depositions.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-500 text-sm italic">
-              No depositions yet. Create your first deposition to get started.
-            </p>
-          </div>
-        ) : (
-          depositions.map((deposition) => (
+      {!editingDeposition && (
+        <div className="space-y-3">
+          {depositions.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-sm italic">
+                No depositions yet. Create your first deposition to get started.
+              </p>
+            </div>
+          ) : (
+            depositions.map((deposition) => (
             <div
               key={deposition.id}
               onClick={() => onDepositionSelect(deposition)}
@@ -371,7 +372,8 @@ export function DepositionSelector({
             </div>
           ))
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

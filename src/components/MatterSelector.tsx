@@ -232,18 +232,19 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
         </div>
       )}
 
-      <div className="space-y-3">
-        {matters.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <FolderIcon className="w-6 h-6 text-gray-400" />
+      {!editingMatter && (
+        <div className="space-y-3">
+          {matters.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <FolderIcon className="w-6 h-6 text-gray-400" />
+              </div>
+              <p className="text-gray-500 text-sm italic">
+                No matters yet. Create your first matter to get started.
+              </p>
             </div>
-            <p className="text-gray-500 text-sm italic">
-              No matters yet. Create your first matter to get started.
-            </p>
-          </div>
-        ) : (
-          matters.map((matter) => (
+          ) : (
+            matters.map((matter) => (
             <div
               key={matter.id}
               onClick={() => onMatterSelect(matter)}
@@ -300,7 +301,8 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
             </div>
           ))
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
