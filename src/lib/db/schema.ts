@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, uuid, boolean, integer } from 'drizzle-orm/pg
 import { relations } from 'drizzle-orm';
 
 // Users table (managed by NextAuth)
-export const users = pgTable('users', {
+export const users = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name'),
   email: text('email').notNull().unique(),
@@ -11,7 +11,7 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const accounts = pgTable('accounts', {
+export const accounts = pgTable('account', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   type: text('type').notNull(),
@@ -26,14 +26,14 @@ export const accounts = pgTable('accounts', {
   session_state: text('session_state'),
 });
 
-export const sessions = pgTable('sessions', {
+export const sessions = pgTable('session', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionToken: text('sessionToken').notNull().unique(),
   userId: uuid('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   expires: timestamp('expires').notNull(),
 });
 
-export const verificationTokens = pgTable('verificationTokens', {
+export const verificationTokens = pgTable('verificationToken', {
   identifier: text('identifier').notNull(),
   token: text('token').notNull().unique(),
   expires: timestamp('expires').notNull(),
