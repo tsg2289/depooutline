@@ -43,7 +43,7 @@ input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color: #
 
 /* 2025 design utilities (plain CSS to avoid Tailwind @apply issues) */
 .elevated-card {
-  background: #f8fafc; /* light gray */
+  background: #f1f5f9; /* darker gray */
   border: 1px solid #e5e7eb; /* slate-200 */
   border-radius: 0.875rem; /* ~rounded-xl */
   box-shadow: 0 14px 28px -14px rgba(15, 23, 42, 0.25);
