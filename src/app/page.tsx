@@ -162,13 +162,16 @@ export default function Home() {
               onMatterSelect={setSelectedMatter}
             />
           </div>
-          <div className="xl:col-span-9">
+          <div className="xl:col-span-1"></div>
+          <div className="xl:col-span-4">
             <DepositionSelector
               selectedMatter={selectedMatter}
               selectedDeposition={selectedDeposition}
               onDepositionSelect={setSelectedDeposition}
             />
           </div>
+          <div className="xl:col-span-1"></div>
+          <div className="xl:col-span-3"></div>
         </div>
 
         {/* Main Content - Only show if deposition is selected */}
