@@ -3,8 +3,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { depositions } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { depositions, customQuestions, notes } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import type { CaseMetadata, OutlineSection } from '@/types';
 
 export async function saveDepositionProgress(
@@ -39,8 +39,89 @@ export async function saveDepositionProgress(
       throw new Error('Deposition not found or access denied');
     }
 
-    // Note: Section selections and custom questions are already saved 
-    // through their respective components (SectionSelector, etc.)
+    // Save custom questions and notes for each section
+    for (const section of sections) {
+      // Save custom questions if they exist
+      if (section.customQuestions && section.customQuestions.length > 0) {
+        // Delete existing custom questions for this section
+        await db
+          .delete(customQuestions)
+          .where(
+            and(
+              eq(customQuestions.depositionId, depositionId),
+              eq(customQuestions.sectionId, section.id)
+            )
+          );
+
+        // Insert new custom questions
+        const questionsToInsert = section.customQuestions
+          .map((question, index) => question.trim())
+          .filter(question => question.length > 0)
+          .map((question, index) => ({
+            depositionId,
+            sectionId: section.id,
+            orderIndex: index,
+            textPlain: question,
+            textCipher: null,
+            iv: null,
+          }));
+
+        if (questionsToInsert.length > 0) {
+          await db.insert(customQuestions).values(questionsToInsert);
+        }
+      }
+
+      // Save notes if they exist
+      if (section.notes && section.notes.trim().length > 0) {
+        // Check if notes already exist for this section
+        const existingNotes = await db
+          .select()
+          .from(notes)
+          .where(
+            and(
+              eq(notes.depositionId, depositionId),
+              eq(notes.sectionId, section.id)
+            )
+          );
+
+        if (existingNotes.length > 0) {
+          // Update existing notes
+          await db
+            .update(notes)
+            .set({
+              bodyPlain: section.notes.trim(),
+              bodyCipher: null,
+              iv: null,
+              updatedAt: new Date(),
+            })
+            .where(
+              and(
+                eq(notes.depositionId, depositionId),
+                eq(notes.sectionId, section.id)
+              )
+            );
+        } else {
+          // Insert new notes
+          await db.insert(notes).values({
+            depositionId,
+            sectionId: section.id,
+            bodyPlain: section.notes.trim(),
+            bodyCipher: null,
+            iv: null,
+          });
+        }
+      } else {
+        // Delete notes if section.notes is empty
+        await db
+          .delete(notes)
+          .where(
+            and(
+              eq(notes.depositionId, depositionId),
+              eq(notes.sectionId, section.id)
+            )
+          );
+      }
+    }
     
     return { 
       success: true, 

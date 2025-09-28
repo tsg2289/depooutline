@@ -11,6 +11,7 @@ import { DepositionSelector } from '@/components/DepositionSelector';
 import type { CaseMetadata, OutlineSection, Matter, Deposition } from '@/types';
 import { DEPOSITION_SECTIONS } from '@/lib/template';
 import { saveDepositionProgress } from '@/lib/actions/save-progress';
+import { loadDepositionProgress } from '@/lib/actions/load-progress';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -23,9 +24,10 @@ export default function Home() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
-  // Update metadata when deposition is selected
+  // Update metadata and load saved progress when deposition is selected
   useEffect(() => {
     if (selectedDeposition) {
+      // Update metadata
       setMetadata({
         caseName: selectedDeposition.caseName || '',
         caseNumber: selectedDeposition.caseNumber || '',
@@ -35,6 +37,24 @@ export default function Home() {
         takingAttorney: selectedDeposition.takingAttorney || '',
         defendingAttorney: selectedDeposition.defendingAttorney || '',
       });
+
+      // Load saved custom questions and notes
+      loadDepositionProgress(selectedDeposition.id, DEPOSITION_SECTIONS)
+        .then(result => {
+          if (result.success && result.sections) {
+            setSections(result.sections);
+          } else {
+            // If no saved progress, use default sections
+            setSections(DEPOSITION_SECTIONS);
+          }
+        })
+        .catch(error => {
+          console.error('Failed to load deposition progress:', error);
+          setSections(DEPOSITION_SECTIONS);
+        });
+    } else {
+      // Reset to default sections when no deposition is selected
+      setSections(DEPOSITION_SECTIONS);
     }
   }, [selectedDeposition]);
 
