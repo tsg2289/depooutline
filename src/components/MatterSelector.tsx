@@ -233,7 +233,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {!editingMatter && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {matters.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -248,13 +248,18 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
             <div
               key={matter.id}
               onClick={() => onMatterSelect(matter)}
-              className={`relative bg-white rounded-2xl cursor-pointer transition-all duration-200 hover:shadow-lg shadow-sm ${
+              className={`relative bg-white rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 ${
                 selectedMatter?.id === matter.id
-                  ? 'shadow-lg ring-2 ring-indigo-200 bg-indigo-50'
-                  : 'hover:shadow-md'
+                  ? 'shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200'
+                  : 'hover:shadow-xl hover:-translate-y-1'
               }`}
+              style={{
+                boxShadow: selectedMatter?.id === matter.id 
+                  ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.1)'
+                  : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+              }}
             >
-              <div className="p-4">
+              <div className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
