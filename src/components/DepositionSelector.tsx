@@ -299,43 +299,76 @@ export function DepositionSelector({
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {depositions.length === 0 ? (
-          <p className="text-gray-500 text-sm italic text-center py-2">
-            No depositions yet. Create your first deposition to get started.
-          </p>
+          <div className="text-center py-8">
+            <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <DocumentTextIcon className="w-6 h-6 text-gray-400" />
+            </div>
+            <p className="text-gray-500 text-sm italic">
+              No depositions yet. Create your first deposition to get started.
+            </p>
+          </div>
         ) : (
           depositions.map((deposition) => (
             <div
               key={deposition.id}
               onClick={() => onDepositionSelect(deposition)}
-              className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+              className={`relative bg-white rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
                 selectedDeposition?.id === deposition.id
-                  ? 'bg-indigo-50 border-indigo-200'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                  ? 'border-indigo-300 shadow-lg ring-2 ring-indigo-100'
+                  : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 text-sm">{deposition.title}</h3>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Deponent: {deposition.deponentName}
-                    {deposition.date && (
-                      <span className="ml-2">
-                        • {new Date(deposition.date).toLocaleDateString()}
+              <div className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                        selectedDeposition?.id === deposition.id ? 'bg-indigo-500' : 'bg-gray-300'
+                      }`}></div>
+                      <h3 className="font-semibold text-gray-900 text-sm truncate">{deposition.title}</h3>
+                    </div>
+                    <div className="space-y-1 mb-2">
+                      <p className="text-xs text-gray-600">
+                        <span className="font-medium">Deponent:</span> {deposition.deponentName}
+                      </p>
+                      {deposition.date && (
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Date:</span> {new Date(deposition.date).toLocaleDateString()}
+                        </p>
+                      )}
+                      {deposition.caseName && (
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Case:</span> {deposition.caseName}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        Created {new Date(deposition.createdAt).toLocaleDateString()}
                       </span>
-                    )}
-                  </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 ml-3">
+                    <button
+                      onClick={(e) => handleEditClick(e, deposition)}
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit deposition"
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => handleEditClick(e, deposition)}
-                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                    title="Edit deposition"
-                  >
-                    <PencilIcon className="w-4 h-4" />
-                  </button>
-                </div>
+                {selectedDeposition?.id === deposition.id && (
+                  <div className="absolute -top-1 -right-1">
+                    <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))
