@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PlusIcon, FolderIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, FolderIcon, PencilIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import type { Matter } from '@/types';
 import { getUserMatters, createMatter, updateMatter } from '@/lib/actions/matters';
 
@@ -17,6 +17,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   const [isCreating, setIsCreating] = useState(false);
   const [editingMatter, setEditingMatter] = useState<Matter | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     loadMatters();
@@ -77,7 +78,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
 
   if (isLoading) {
     return (
-      <div className="elevated-card p-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded mb-4"></div>
           <div className="space-y-2">
@@ -90,36 +91,24 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   }
 
   return (
-    <div className="elevated-card p-4">
-      <div className="mb-4">
-        <div className="heading-bar">
-          <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
-            <FolderIcon className="w-5 h-5" />
-            Select Matter
-          </h2>
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-1"
-          >
-            <PlusIcon className="w-4 h-4" />
-            New
-          </button>
-        </div>
+    <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="text-center mb-6">
+        <h2 className="text-xl font-medium text-gray-700">Select Matter</h2>
       </div>
 
       {showCreateForm && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <form action={handleCreateMatter} className="space-y-3">
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <form action={handleCreateMatter} className="space-y-4">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Matter Title *
+                Matter Title
               </label>
               <input
                 type="text"
                 id="title"
                 name="title"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., Smith v. Johnson Medical Malpractice"
               />
             </div>
@@ -131,7 +120,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 id="description"
                 name="description"
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Brief description of the matter..."
               />
             </div>
@@ -142,7 +131,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 name="e2eeEnabled"
                 value="true"
                 defaultChecked
-                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label htmlFor="e2eeEnabled" className="ml-2 text-sm text-gray-700">
                 Enable end-to-end encryption (recommended)
@@ -152,7 +141,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
               <button
                 type="submit"
                 disabled={isCreating}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 text-sm font-medium"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
               >
                 {isCreating ? 'Creating...' : 'Create Matter'}
               </button>
@@ -169,12 +158,12 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {editingMatter && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h3 className="text-sm font-medium text-blue-900 mb-3">Edit Matter</h3>
-          <form action={handleUpdateMatter} className="space-y-3">
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-sm font-medium text-gray-900 mb-3">Edit Matter</h3>
+          <form action={handleUpdateMatter} className="space-y-4">
             <div>
               <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-1">
-                Matter Title *
+                Matter Title
               </label>
               <input
                 type="text"
@@ -182,7 +171,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 name="title"
                 required
                 defaultValue={editingMatter.title}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., Smith v. Johnson Medical Malpractice"
               />
             </div>
@@ -195,7 +184,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 name="description"
                 rows={2}
                 defaultValue={editingMatter.description || ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Brief description of the matter..."
               />
             </div>
@@ -233,118 +222,90 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {!editingMatter && (
-        <div className="space-y-8">
+        <div className="space-y-4">
           {matters.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                 <FolderIcon className="w-6 h-6 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-sm italic">
+              <p className="text-gray-500 text-sm">
                 No matters yet. Create your first matter to get started.
               </p>
-            </div>
-          ) : selectedMatter ? (
-            // Show only selected matter with change button
-            <div className="space-y-4">
-              <div
-                className="relative bg-white rounded-3xl shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200"
-                style={{
-                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.1)'
-                }}
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium flex items-center gap-2 mx-auto"
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 rounded-full flex-shrink-0 bg-indigo-500" />
-                        <h3 className="text-lg font-bold text-slate-900 truncate">
-                          {selectedMatter.title}
-                        </h3>
-                      </div>
-                      {selectedMatter.description && (
-                        <p className="text-sm text-slate-600 mb-2 line-clamp-2">
-                          {selectedMatter.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
-                        <span className="flex items-center gap-1">
-                          {selectedMatter.e2eeEnabled ? '🔒 E2EE' : '📝'} 
-                          {selectedMatter.e2eeEnabled ? 'Enabled' : 'Standard'}
-                        </span>
-                        <span>
-                          Created {new Date(selectedMatter.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 ml-3">
-                      <button
-                        onClick={(e) => handleEditClick(e, selectedMatter)}
-                        className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                        title="Edit matter"
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                        Edit
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="text-center">
-                <button
-                  onClick={() => onMatterSelect(null)}
-                  className="px-4 py-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors text-sm font-medium"
-                >
-                  Change Matter
-                </button>
-              </div>
+                <PlusIcon className="w-4 h-4" />
+                Create New Matter
+              </button>
             </div>
           ) : (
-            // Show all matters when none selected
-            matters.map((matter) => (
-            <div
-              key={matter.id}
-              onClick={() => onMatterSelect(matter)}
-              className="relative bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 hover:-translate-y-1"
-              style={{
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300"></div>
-                      <h3 className="font-semibold text-gray-900 text-sm truncate">{matter.title}</h3>
+            <>
+              <div className="relative">
+                <label htmlFor="matter-select" className="block text-sm font-medium text-gray-700 mb-1">
+                  Matter
+                </label>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-left focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center justify-between"
+                  >
+                    <span className="text-gray-900">
+                      {selectedMatter ? selectedMatter.title : 'Select a Matter'}
+                    </span>
+                    <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showDropdown && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      {matters.map((matter) => (
+                        <button
+                          key={matter.id}
+                          type="button"
+                          onClick={() => {
+                            onMatterSelect(matter);
+                            setShowDropdown(false);
+                          }}
+                          className={`w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center justify-between ${
+                            selectedMatter?.id === matter.id ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                          }`}
+                        >
+                          <div>
+                            <div className="font-medium">{matter.title}</div>
+                            {matter.description && (
+                              <div className="text-sm text-gray-500 truncate">{matter.description}</div>
+                            )}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(e, matter);
+                              setShowDropdown(false);
+                            }}
+                            className="ml-2 p-1 text-gray-400 hover:text-blue-600 rounded"
+                            title="Edit matter"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                        </button>
+                      ))}
                     </div>
-                    {matter.description && (
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{matter.description}</p>
-                    )}
-                    <div className="flex items-center gap-2">
-                      {matter.e2eeEnabled && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          🔒 E2EE
-                        </span>
-                      )}
-                      <span className="text-xs text-gray-400">
-                        Created {new Date(matter.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 ml-3">
-                    <button
-                      onClick={(e) => handleEditClick(e, matter)}
-                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                      title="Edit matter"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                      Edit
-                    </button>
-                  </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))
-        )}
+              
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="px-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md text-sm font-medium flex items-center gap-2"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  Create New Matter
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
