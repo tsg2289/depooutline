@@ -10,6 +10,7 @@ import { MatterSelector } from '@/components/MatterSelector';
 import { DepositionSelector } from '@/components/DepositionSelector';
 import type { CaseMetadata, OutlineSection, Matter, Deposition } from '@/types';
 import { DEPOSITION_SECTIONS } from '@/lib/template';
+import { saveDepositionProgress } from '@/lib/actions/save-progress';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -19,6 +20,8 @@ export default function Home() {
     caseName: '', caseNumber: '', jurisdiction: '', deponent: '', depositionDate: '', takingAttorney: '', defendingAttorney: ''
   });
   const [sections, setSections] = useState<OutlineSection[]>(DEPOSITION_SECTIONS);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   // Update metadata when deposition is selected
   useEffect(() => {
@@ -55,6 +58,32 @@ export default function Home() {
   const handleGenerateOutline = () => {
     console.log('Generating outline with metadata:', metadata);
     console.log('Selected sections:', sections.filter(s => s.enabled));
+  };
+
+  const handleSaveProgress = async () => {
+    if (!selectedDeposition) {
+      setSaveMessage('Please select a deposition first');
+      setTimeout(() => setSaveMessage(null), 3000);
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const result = await saveDepositionProgress(selectedDeposition.id, metadata, sections);
+      
+      if (result.success) {
+        setSaveMessage('✅ Progress saved successfully!');
+      } else {
+        setSaveMessage(`❌ ${result.error}`);
+      }
+    } catch (error) {
+      setSaveMessage('❌ Failed to save progress');
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 3000);
+    }
   };
 
   const isMetadataComplete = Boolean(
@@ -172,16 +201,51 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="text-center">
-            <button
-              onClick={handleGenerateOutline}
-              disabled={!isMetadataComplete}
-              className={`py-4 px-10 rounded-2xl font-bold text-xl shadow-2xl transition-all duration-300 transform ${!isMetadataComplete ? 'bg-gray-400 cursor-not-allowed text-white opacity-60' : 'text-white hover:scale-105 hover:shadow-3xl'}`}
-              style={{ background: !isMetadataComplete ? undefined : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-            >
-              {isMetadataComplete ? 'Generate Outline' : 'Fill Required Fields'}
-            </button>
-            <p className="text-base text-slate-600 mt-4 font-medium">Complete all required fields, then fine-tune your sections and export</p>
+          <div className="text-center space-y-4">
+            {/* Save Message */}
+            {saveMessage && (
+              <div className="inline-block px-4 py-2 rounded-lg bg-white shadow-lg border">
+                <span className="text-sm font-medium">{saveMessage}</span>
+              </div>
+            )}
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button
+                onClick={handleSaveProgress}
+                disabled={isSaving || !selectedDeposition}
+                className={`py-4 px-10 rounded-2xl font-bold text-xl shadow-2xl transition-all duration-300 transform ${
+                  isSaving || !selectedDeposition 
+                    ? 'bg-gray-400 cursor-not-allowed text-white opacity-60' 
+                    : 'text-white hover:scale-105 hover:shadow-3xl'
+                }`}
+                style={{ 
+                  background: isSaving || !selectedDeposition 
+                    ? undefined 
+                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                }}
+              >
+                {isSaving ? 'Saving...' : '💾 Save Progress'}
+              </button>
+              
+              <button
+                onClick={handleGenerateOutline}
+                disabled={!isMetadataComplete}
+                className={`py-4 px-10 rounded-2xl font-bold text-xl shadow-2xl transition-all duration-300 transform ${
+                  !isMetadataComplete 
+                    ? 'bg-gray-400 cursor-not-allowed text-white opacity-60' 
+                    : 'text-white hover:scale-105 hover:shadow-3xl'
+                }`}
+                style={{ 
+                  background: !isMetadataComplete 
+                    ? undefined 
+                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                }}
+              >
+                {isMetadataComplete ? '📄 Generate Outline' : 'Fill Required Fields'}
+              </button>
+            </div>
+            <p className="text-base text-slate-600 mt-4 font-medium">Save your progress anytime, then complete all fields to generate the outline</p>
           </div>
         </div>
       )}
