@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar inspired by estate planning app */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f8fafc; border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 5px; border: 2px solid #f8fafc; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%); transform: scale(1.05); }
+
+/* Enhanced focus states */
+*:focus { outline: none; }
+
+/* Smooth transitions for all interactive elements */
+button, input, label, select, textarea { transition: all 0.2s ease-in-out; }
+
+/* Loading spinner animation */
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.spinner { border: 3px solid #e2e8f0; border-top: 3px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+
+/* Card shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-1px); }
+  20%, 40%, 60%, 80% { transform: translateX(1px); }
+}
+.card-shake:hover { animation: shake 0.6s ease-in-out; }
+
+/* Enhanced shadows */
+.shadow-3xl { box-shadow: 0 32px 56px -20px rgba(15, 23, 42, 0.25); }
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* placeholder color to match theme */
+input::placeholder, textarea::placeholder { color: #94a3b8; opacity: 1; }
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color: #94a3b8; opacity: 1; }
+
+/* 2025 design utilities (plain CSS to avoid Tailwind @apply issues) */
+.elevated-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* slate-200 */
+  border-radius: 0.875rem; /* ~rounded-xl */
+  box-shadow: 0 14px 28px -14px rgba(15, 23, 42, 0.25);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(2px);
+}
+.elevated-card:hover { box-shadow: 0 24px 44px -18px rgba(15, 23, 42, 0.28); }
+
+.panel-heading { color: #0f172a; font-weight: 800; letter-spacing: -0.02em; }
+.subtle-help { font-size: 0.9rem; color: #64748b; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 600; border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem; color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.2);
+}
+.btn:hover { transform: scale(1.02); box-shadow: 0 18px 28px -10px rgba(0, 0, 0, 0.25); }
+
+.btn-primary { background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%); }
+.btn-success { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+.btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+.btn-info { background: linear-gradient(135deg, #60a5fa 0%, #4f46e5 100%); }
+
+.glass { background: rgba(255,255,255,0.9); border: 1px solid #e2e8f0; border-radius: 1rem; backdrop-filter: blur(6px); }
+
+.container-pad { padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 640px) { .container-pad { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 768px) { .container-pad { padding-left: 2rem; padding-right: 2rem; } }
+
+/* Background grid + gradient blobs (inspired by referenced site) */
+.bg-grid {
+  position: relative;
+  background-image: linear-gradient(to right, rgba(99,102,241,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(99,102,241,0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.bg-grid:before,
+.bg-grid:after {
+  content: "";
+  position: absolute; inset: -10% -10% auto auto; z-index: 0;
+  filter: blur(60px);
+}
+.bg-grid:before {
+  width: 40vw; height: 40vw; border-radius: 9999px;
+  background: radial-gradient(closest-side, rgba(99,102,241,0.25), transparent 70%);
+  top: -8rem; left: -8rem;
+}
+.bg-grid:after {
+  width: 36vw; height: 36vw; border-radius: 9999px;
+  background: radial-gradient(closest-side, rgba(124,58,237,0.22), transparent 70%);
+  bottom: -6rem; right: -8rem;
+}
+
+/* Ensure content stacks above the decorative background */
+.bg-grid > * { position: relative; z-index: 1; }
+
+/* Gradient heading chip used behind card titles */
+.heading-chip { /* keep for inline uses elsewhere */
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  background: linear-gradient(90deg, #60a5fa 0%, #7c3aed 50%, #ec4899 100%);
+  box-shadow: 0 10px 24px -12px rgba(76, 29, 149, 0.35);
+}
+
+/* Full-width gradient header bar inside cards */
+.heading-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.875rem;
+  color: #ffffff;
+  background: linear-gradient(90deg, #60a5fa 0%, #7c3aed 50%, #ec4899 100%);
+  box-shadow: 0 10px 24px -12px rgba(76, 29, 149, 0.35);
+}
+
+/* Extend bar to card edges to align with outer radius (cards use p-8) */
+.heading-bar-bleed {
+  position: relative;
+  left: -2rem;              /* match card horizontal padding */
+  right: -2rem;
+  width: calc(100% + 4rem); /* expand exactly to card inner edges */
+  padding-left: calc(0.9rem + 2rem);
+  padding-right: calc(0.9rem + 2rem);
+  box-sizing: border-box;   /* ensure width includes padding */
+}
