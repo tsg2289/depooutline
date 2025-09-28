@@ -302,9 +302,6 @@ export function DepositionSelector({
       <div className="space-y-3">
         {depositions.length === 0 ? (
           <div className="text-center py-8">
-            <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <DocumentTextIcon className="w-6 h-6 text-gray-400" />
-            </div>
             <p className="text-gray-500 text-sm italic">
               No depositions yet. Create your first deposition to get started.
             </p>
