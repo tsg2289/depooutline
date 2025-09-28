@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PlusIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, DocumentTextIcon, PencilIcon } from '@heroicons/react/24/outline';
 import type { Matter, Deposition } from '@/types';
-import { getMatterDepositions, createDeposition } from '@/lib/actions/depositions';
+import { getMatterDepositions, createDeposition, updateDeposition } from '@/lib/actions/depositions';
 
 interface DepositionSelectorProps {
   selectedMatter: Matter | null;
@@ -20,6 +20,8 @@ export function DepositionSelector({
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [editingDeposition, setEditingDeposition] = useState<Deposition | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (selectedMatter) {
@@ -60,6 +62,32 @@ export function DepositionSelector({
     } finally {
       setIsCreating(false);
     }
+  };
+
+  const handleUpdateDeposition = async (formData: FormData) => {
+    if (!editingDeposition) return;
+    
+    setIsUpdating(true);
+    try {
+      const result = await updateDeposition(editingDeposition.id, formData);
+      if (result.success) {
+        await loadDepositions();
+        // Update selected deposition if it was the one being edited
+        if (selectedDeposition?.id === editingDeposition.id) {
+          onDepositionSelect(result.deposition);
+        }
+        setEditingDeposition(null);
+      }
+    } catch (error) {
+      console.error('Failed to update deposition:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent, deposition: Deposition) => {
+    e.stopPropagation(); // Prevent deposition selection when clicking edit
+    setEditingDeposition(deposition);
   };
 
   if (!selectedMatter) {
@@ -190,6 +218,87 @@ export function DepositionSelector({
         </div>
       )}
 
+      {editingDeposition && (
+        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <h3 className="text-sm font-medium text-blue-900 mb-3">Edit Deposition</h3>
+          <form action={handleUpdateDeposition} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-1">
+                  Deposition Title *
+                </label>
+                <input
+                  type="text"
+                  id="edit-title"
+                  name="title"
+                  required
+                  defaultValue={editingDeposition.title}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  placeholder="e.g., John Smith Deposition"
+                />
+              </div>
+              <div>
+                <label htmlFor="edit-deponentName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Deponent Name *
+                </label>
+                <input
+                  type="text"
+                  id="edit-deponentName"
+                  name="deponentName"
+                  required
+                  defaultValue={editingDeposition.deponentName}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  placeholder="Full name of deponent"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="edit-date" className="block text-sm font-medium text-gray-700 mb-1">
+                  Deposition Date
+                </label>
+                <input
+                  type="date"
+                  id="edit-date"
+                  name="date"
+                  defaultValue={editingDeposition.date ? editingDeposition.date.toISOString().split('T')[0] : ''}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="edit-caseName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Case Name
+                </label>
+                <input
+                  type="text"
+                  id="edit-caseName"
+                  name="caseName"
+                  defaultValue={editingDeposition.caseName || ''}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  placeholder="e.g., Smith v. Johnson"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={isUpdating}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
+              >
+                {isUpdating ? 'Updating...' : 'Update Deposition'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingDeposition(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       <div className="space-y-2">
         {depositions.length === 0 ? (
           <p className="text-gray-500 text-sm italic text-center py-2">
@@ -217,6 +326,15 @@ export function DepositionSelector({
                       </span>
                     )}
                   </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => handleEditClick(e, deposition)}
+                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                    title="Edit deposition"
+                  >
+                    <PencilIcon className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
