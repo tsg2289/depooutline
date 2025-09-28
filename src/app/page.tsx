@@ -152,8 +152,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Matter and Deposition Selectors */}
+      {/* Main Content Container */}
       <div className="max-w-7xl mx-auto container-pad py-6">
+        {/* Matter and Deposition Selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <MatterSelector 
             selectedMatter={selectedMatter}
@@ -165,11 +166,10 @@ export default function Home() {
             onDepositionSelect={setSelectedDeposition}
           />
         </div>
-      </div>
 
-      {/* Main Content - Only show if deposition is selected */}
-      {selectedDeposition && (
-        <div className="max-w-7xl mx-auto container-pad py-8 md:py-12">
+        {/* Main Content - Only show if deposition is selected */}
+        {selectedDeposition && (
+          <div className="py-2 md:py-6">
           <header className="text-center mb-8 md:mb-10">
             <p className="text-xl md:text-2xl font-semibold gradient-text">
               Working on: {selectedDeposition.title}
@@ -267,8 +267,9 @@ export default function Home() {
             </div>
             <p className="text-base text-slate-600 mt-4 font-medium">Save your progress anytime, then complete all fields to generate the outline</p>
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* Show message if no deposition selected */}
       {!selectedDeposition && (
