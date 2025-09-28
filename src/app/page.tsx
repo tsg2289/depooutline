@@ -8,6 +8,7 @@ import { SectionSelector } from '@/components/SectionSelector';
 import { OutlinePreview } from '@/components/OutlinePreview';
 import { MatterSelector } from '@/components/MatterSelector';
 import { DepositionSelector } from '@/components/DepositionSelector';
+import { DepositionNavigation } from '@/components/DepositionNavigation';
 import type { CaseMetadata, OutlineSection, Matter, Deposition } from '@/types';
 import { DEPOSITION_SECTIONS } from '@/lib/template';
 import { saveDepositionProgress } from '@/lib/actions/save-progress';
@@ -223,7 +224,12 @@ export default function Home() {
               />
             </div>
             
-            <div className="xl:col-span-3">
+            <div className="xl:col-span-3 space-y-6">
+              <DepositionNavigation
+                selectedMatter={selectedMatter}
+                selectedDeposition={selectedDeposition}
+                onDepositionSelect={setSelectedDeposition}
+              />
               <OutlinePreview sections={sections} metadata={metadata} />
             </div>
           </div>
