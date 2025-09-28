@@ -48,6 +48,10 @@ export default function Home() {
     redirect('/auth/signin');
   }
 
+  // Debug: log session status
+  console.log('Session status:', status);
+  console.log('Session data:', session);
+
   const handleGenerateOutline = () => {
     console.log('Generating outline with metadata:', metadata);
     console.log('Selected sections:', sections.filter(s => s.enabled));
