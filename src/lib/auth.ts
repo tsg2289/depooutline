@@ -83,16 +83,23 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     redirect: async ({ url, baseUrl }) => {
-      // If the url is a relative path, make it absolute
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`;
+      console.log('NextAuth redirect:', { url, baseUrl });
+      
+      // If coming from email verification or sign-in, redirect to home
+      if (url.includes('/auth/') || url.includes('verify') || url.includes('signin')) {
+        console.log('Redirecting to home page');
+        return baseUrl + '/';
       }
-      // If the url is on the same domain, allow it
-      if (new URL(url).origin === baseUrl) {
-        return url;
+      
+      // For callback URLs, redirect to home page
+      if (url.includes('callback')) {
+        console.log('Callback detected, redirecting to home');
+        return baseUrl + '/';
       }
-      // Otherwise, redirect to the home page
-      return baseUrl;
+      
+      // Default: redirect to home page
+      console.log('Default redirect to home');
+      return baseUrl + '/';
     },
   },
   cookies: {
