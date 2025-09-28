@@ -24,6 +24,7 @@ export function DepositionSelector({
   const [isUpdating, setIsUpdating] = useState(false);
   const [deletingDeposition, setDeletingDeposition] = useState<Deposition | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedMatter) {
@@ -118,19 +119,42 @@ export function DepositionSelector({
     }
   };
 
+  // Enhanced input styling matching CaseMetadataForm
+  const getInputClass = (fieldName: string, hasValue: boolean = false) => {
+    const isFocused = focusedField === fieldName;
+    return `w-full px-4 py-3 text-base border-2 bg-white text-slate-900 placeholder:text-slate-400 transition-all duration-200 ${
+      hasValue 
+        ? 'border-green-400 bg-green-50' 
+        : isFocused 
+          ? 'border-indigo-400 bg-indigo-50' 
+          : 'border-slate-300 hover:border-slate-400'
+    }`;
+  };
+
+  const sharedInputStyle: React.CSSProperties = {
+    borderRadius: 12,
+  };
+
   if (!selectedMatter) {
     return (
-      <div className="elevated-card p-4">
-        <div className="heading-bar">
-          <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
-            <DocumentTextIcon className="w-5 h-5" />
-            Select Deposition
-          </h2>
+      <div className="elevated-card card-shake p-8 overflow-hidden">
+        <div className="mb-6">
+          <div className="heading-bar heading-bar-bleed">
+            <h2 className="panel-heading text-2xl text-white m-0 flex items-center gap-3">
+              <DocumentTextIcon className="w-6 h-6" />
+              Select Deposition
+            </h2>
+          </div>
         </div>
-        <div className="mt-4">
-          <p className="text-gray-500 text-sm italic text-center py-3">
-            Please select a matter first to view depositions.
-          </p>
+        <div className="bg-slate-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="text-center py-8">
+            <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <DocumentTextIcon className="w-6 h-6 text-gray-400" />
+            </div>
+            <p className="text-gray-500 text-sm">
+              Please select a matter first to view depositions.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -138,7 +162,7 @@ export function DepositionSelector({
 
   if (isLoading) {
     return (
-      <div className="elevated-card p-4">
+      <div className="elevated-card card-shake p-8 overflow-hidden">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded mb-4"></div>
           <div className="space-y-2">
@@ -151,11 +175,11 @@ export function DepositionSelector({
   }
 
   return (
-    <div className="elevated-card p-4">
-      <div className="mb-4">
-        <div className="heading-bar">
-          <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
-            <DocumentTextIcon className="w-5 h-5" />
+    <div className="elevated-card card-shake p-8 overflow-hidden">
+      <div className="mb-6">
+        <div className="heading-bar heading-bar-bleed">
+          <h2 className="panel-heading text-2xl text-white m-0 flex items-center gap-3">
+            <DocumentTextIcon className="w-6 h-6" />
             Select Deposition
           </h2>
           <button
@@ -169,58 +193,73 @@ export function DepositionSelector({
       </div>
 
       {showCreateForm && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <form action={handleCreateDeposition} className="space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Deposition Title *
+        <div className="bg-slate-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-semibold text-slate-800">Create New Deposition</h3>
+          </div>
+          <form action={handleCreateDeposition} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative">
+                <label htmlFor="title" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                  Deposition Title
                 </label>
                 <input
                   type="text"
                   id="title"
                   name="title"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  onFocus={() => setFocusedField('title')}
+                  onBlur={() => setFocusedField(null)}
+                  className={getInputClass('title')}
+                  style={sharedInputStyle}
                   placeholder="e.g., Dr. Smith Deposition"
                 />
               </div>
-              <div>
-                <label htmlFor="deponentName" className="block text-sm font-medium text-gray-700 mb-1">
-                  Deponent Name *
+              <div className="relative">
+                <label htmlFor="deponentName" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                  Deponent Name
                 </label>
                 <input
                   type="text"
                   id="deponentName"
                   name="deponentName"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  onFocus={() => setFocusedField('deponentName')}
+                  onBlur={() => setFocusedField(null)}
+                  className={getInputClass('deponentName')}
+                  style={sharedInputStyle}
                   placeholder="e.g., Dr. John Smith"
                 />
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative">
+                <label htmlFor="date" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
                   Deposition Date
                 </label>
                 <input
                   type="date"
                   id="date"
                   name="date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  onFocus={() => setFocusedField('date')}
+                  onBlur={() => setFocusedField(null)}
+                  className={getInputClass('date')}
+                  style={sharedInputStyle}
                 />
               </div>
-              <div>
-                <label htmlFor="caseName" className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="relative">
+                <label htmlFor="caseName" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
                   Case Name
                 </label>
                 <input
                   type="text"
                   id="caseName"
                   name="caseName"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  onFocus={() => setFocusedField('caseName')}
+                  onBlur={() => setFocusedField(null)}
+                  className={getInputClass('caseName')}
+                  style={sharedInputStyle}
                   placeholder="e.g., Smith v. Johnson"
                 />
               </div>
@@ -353,91 +392,134 @@ export function DepositionSelector({
       )}
 
       {!editingDeposition && !deletingDeposition && (
-        <div className="space-y-8">
+        <div className="bg-slate-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-semibold text-slate-800">Deposition Selection</h3>
+          </div>
+          
           {depositions.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 text-sm italic">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <DocumentTextIcon className="w-6 h-6 text-gray-400" />
+              </div>
+              <p className="text-gray-500 text-sm">
                 No depositions yet. Create your first deposition to get started.
               </p>
             </div>
           ) : (
-            depositions.map((deposition) => (
-            <div
-              key={deposition.id}
-              onClick={() => onDepositionSelect(deposition)}
-              className={`relative bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 ${
-                selectedDeposition?.id === deposition.id
-                  ? 'shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200'
-                  : 'hover:shadow-xl hover:-translate-y-1'
-              }`}
-              style={{
-                boxShadow: selectedDeposition?.id === deposition.id 
-                  ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.1)'
-                  : '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                        selectedDeposition?.id === deposition.id ? 'bg-indigo-500' : 'bg-gray-300'
-                      }`}></div>
-                      <h3 className="font-semibold text-gray-900 text-sm truncate">{deposition.title}</h3>
-                    </div>
-                    <div className="space-y-1 mb-2">
-                      <p className="text-xs text-gray-600">
-                        <span className="font-medium">Deponent:</span> {deposition.deponentName}
-                      </p>
-                      {deposition.date && (
-                        <p className="text-xs text-gray-600">
-                          <span className="font-medium">Date:</span> {new Date(deposition.date).toLocaleDateString()}
-                        </p>
-                      )}
-                      {deposition.caseName && (
-                        <p className="text-xs text-gray-600">
-                          <span className="font-medium">Case:</span> {deposition.caseName}
-                        </p>
+            <div className="space-y-6">
+              <div className="relative">
+                <label htmlFor="deposition-select" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                  Selected Deposition
+                </label>
+                <div
+                  className={getInputClass('deposition-select', !!selectedDeposition)}
+                  style={sharedInputStyle}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-900">
+                        {selectedDeposition?.title || 'No deposition selected'}
+                      </div>
+                      {selectedDeposition && (
+                        <div className="space-y-1 mt-2">
+                          <div className="text-sm text-slate-600">
+                            <span className="font-medium">Deponent:</span> {selectedDeposition.deponentName}
+                          </div>
+                          {selectedDeposition.date && (
+                            <div className="text-sm text-slate-600">
+                              <span className="font-medium">Date:</span> {new Date(selectedDeposition.date).toLocaleDateString()}
+                            </div>
+                          )}
+                          {selectedDeposition.caseName && (
+                            <div className="text-sm text-slate-600">
+                              <span className="font-medium">Case:</span> {selectedDeposition.caseName}
+                            </div>
+                          )}
+                          <div className="text-xs text-slate-500">
+                            Created {new Date(selectedDeposition.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400">
-                        Created {new Date(deposition.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 ml-3">
-                    <button
-                      onClick={(e) => handleEditClick(e, deposition)}
-                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                      title="Edit deposition"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={(e) => handleDeleteClick(e, deposition)}
-                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
-                      title="Delete deposition"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                      Delete
-                    </button>
+                    {selectedDeposition && (
+                      <div className="flex items-center gap-1 ml-3">
+                        <button
+                          onClick={(e) => handleEditClick(e, selectedDeposition)}
+                          className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors text-sm"
+                          title="Edit deposition"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteClick(e, selectedDeposition)}
+                          className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors text-sm"
+                          title="Delete deposition"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-                {selectedDeposition?.id === deposition.id && (
-                  <div className="absolute -top-1 -right-1">
-                    <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
               </div>
+              
+              {!selectedDeposition && (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">Available Depositions</h4>
+                  <div className="grid gap-3">
+                    {depositions.map((deposition) => (
+                      <div
+                        key={deposition.id}
+                        onClick={() => onDepositionSelect(deposition)}
+                        className="p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-slate-900 truncate">{deposition.title}</h5>
+                            <div className="space-y-1 mt-2">
+                              <div className="text-sm text-slate-600">
+                                <span className="font-medium">Deponent:</span> {deposition.deponentName}
+                              </div>
+                              {deposition.date && (
+                                <div className="text-sm text-slate-600">
+                                  <span className="font-medium">Date:</span> {new Date(deposition.date).toLocaleDateString()}
+                                </div>
+                              )}
+                              {deposition.caseName && (
+                                <div className="text-sm text-slate-600">
+                                  <span className="font-medium">Case:</span> {deposition.caseName}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-xs text-slate-400 mt-2">
+                              Created {new Date(deposition.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 ml-3">
+                            <button
+                              onClick={(e) => handleEditClick(e, deposition)}
+                              className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors text-sm"
+                              title="Edit deposition"
+                            >
+                              <PencilIcon className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteClick(e, deposition)}
+                              className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors text-sm"
+                              title="Delete deposition"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          ))
-        )}
+          )}
         </div>
       )}
     </div>

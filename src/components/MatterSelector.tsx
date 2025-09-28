@@ -19,6 +19,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   const [isUpdating, setIsUpdating] = useState(false);
   const [deletingMatter, setDeletingMatter] = useState<Matter | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
     loadMatters();
@@ -103,6 +104,22 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
     }
   };
 
+  // Enhanced input styling matching CaseMetadataForm
+  const getInputClass = (fieldName: string, hasValue: boolean = false) => {
+    const isFocused = focusedField === fieldName;
+    return `w-full px-4 py-3 text-base border-2 bg-white text-slate-900 placeholder:text-slate-400 transition-all duration-200 ${
+      hasValue 
+        ? 'border-green-400 bg-green-50' 
+        : isFocused 
+          ? 'border-indigo-400 bg-indigo-50' 
+          : 'border-slate-300 hover:border-slate-400'
+    }`;
+  };
+
+  const sharedInputStyle: React.CSSProperties = {
+    borderRadius: 12,
+  };
+
   if (isLoading) {
     return (
       <div className="elevated-card p-4">
@@ -118,11 +135,11 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
   }
 
   return (
-    <div className="elevated-card p-4">
-      <div className="mb-4">
-        <div className="heading-bar">
-          <h2 className="text-xl panel-heading text-white m-0 flex items-center gap-2">
-            <FolderIcon className="w-5 h-5" />
+    <div className="elevated-card card-shake p-8 overflow-hidden">
+      <div className="mb-6">
+        <div className="heading-bar heading-bar-bleed">
+          <h2 className="panel-heading text-2xl text-white m-0 flex items-center gap-3">
+            <FolderIcon className="w-6 h-6" />
             Select Matter
           </h2>
           <button
@@ -136,30 +153,39 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       </div>
 
       {showCreateForm && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <form action={handleCreateMatter} className="space-y-3">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Matter Title *
+        <div className="bg-slate-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-semibold text-slate-800">Create New Matter</h3>
+          </div>
+          <form action={handleCreateMatter} className="space-y-6">
+            <div className="relative">
+              <label htmlFor="title" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                Matter Title
               </label>
               <input
                 type="text"
                 id="title"
                 name="title"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                onFocus={() => setFocusedField('title')}
+                onBlur={() => setFocusedField(null)}
+                className={getInputClass('title')}
+                style={sharedInputStyle}
                 placeholder="e.g., Smith v. Johnson Medical Malpractice"
               />
             </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="relative">
+              <label htmlFor="description" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
                 Description
               </label>
               <textarea
                 id="description"
                 name="description"
-                rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                rows={3}
+                onFocus={() => setFocusedField('description')}
+                onBlur={() => setFocusedField(null)}
+                className={getInputClass('description')}
+                style={sharedInputStyle}
                 placeholder="Brief description of the matter..."
               />
             </div>
@@ -172,7 +198,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 defaultChecked
                 className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
               />
-              <label htmlFor="e2eeEnabled" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="e2eeEnabled" className="ml-2 text-sm text-slate-700">
                 Enable end-to-end encryption (recommended)
               </label>
             </div>
@@ -197,12 +223,14 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {editingMatter && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h3 className="text-sm font-medium text-blue-900 mb-3">Edit Matter</h3>
-          <form action={handleUpdateMatter} className="space-y-3">
-            <div>
-              <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-1">
-                Matter Title *
+        <div className="bg-blue-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-semibold text-slate-800">Edit Matter</h3>
+          </div>
+          <form action={handleUpdateMatter} className="space-y-6">
+            <div className="relative">
+              <label htmlFor="edit-title" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                Matter Title
               </label>
               <input
                 type="text"
@@ -210,20 +238,26 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 name="title"
                 required
                 defaultValue={editingMatter.title}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onFocus={() => setFocusedField('edit-title')}
+                onBlur={() => setFocusedField(null)}
+                className={getInputClass('edit-title', !!editingMatter.title)}
+                style={sharedInputStyle}
                 placeholder="e.g., Smith v. Johnson Medical Malpractice"
               />
             </div>
-            <div>
-              <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="relative">
+              <label htmlFor="edit-description" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
                 Description
               </label>
               <textarea
                 id="edit-description"
                 name="description"
-                rows={2}
+                rows={3}
                 defaultValue={editingMatter.description || ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onFocus={() => setFocusedField('edit-description')}
+                onBlur={() => setFocusedField(null)}
+                className={getInputClass('edit-description', !!editingMatter.description)}
+                style={sharedInputStyle}
                 placeholder="Brief description of the matter..."
               />
             </div>
@@ -236,7 +270,7 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
                 defaultChecked={editingMatter.e2eeEnabled}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label htmlFor="edit-e2eeEnabled" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="edit-e2eeEnabled" className="ml-2 text-sm text-slate-700">
                 Enable end-to-end encryption (recommended)
               </label>
             </div>
@@ -286,134 +320,123 @@ export function MatterSelector({ selectedMatter, onMatterSelect }: MatterSelecto
       )}
 
       {!editingMatter && !deletingMatter && (
-        <div className="space-y-8">
+        <div className="bg-slate-50/50 rounded-xl p-4 mx-4 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-semibold text-slate-800">Matter Selection</h3>
+          </div>
+          
           {matters.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                 <FolderIcon className="w-6 h-6 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-sm italic">
+              <p className="text-gray-500 text-sm">
                 No matters yet. Create your first matter to get started.
               </p>
             </div>
-          ) : selectedMatter ? (
-            // Show only selected matter with change button
-            <div className="space-y-4">
-              <div
-                className="relative bg-white rounded-3xl shadow-xl ring-2 ring-indigo-300 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200"
-                style={{
-                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(99, 102, 241, 0.1)'
-                }}
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 rounded-full flex-shrink-0 bg-indigo-500" />
-                        <h3 className="text-lg font-bold text-slate-900 truncate">
-                          {selectedMatter.title}
-                        </h3>
-                      </div>
-                      {selectedMatter.description && (
-                        <p className="text-sm text-slate-600 mb-2 line-clamp-2">
-                          {selectedMatter.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
-                        <span className="flex items-center gap-1">
-                          {selectedMatter.e2eeEnabled ? '🔒 E2EE' : '📝'} 
-                          {selectedMatter.e2eeEnabled ? 'Enabled' : 'Standard'}
-                        </span>
-                        <span>
-                          Created {new Date(selectedMatter.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 ml-3">
-                      <button
-                        onClick={(e) => handleEditClick(e, selectedMatter)}
-                        className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                        title="Edit matter"
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={(e) => handleDeleteClick(e, selectedMatter)}
-                        className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
-                        title="Delete matter"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="text-center">
-                <button
-                  onClick={() => onMatterSelect(null)}
-                  className="px-4 py-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors text-sm font-medium"
-                >
-                  Change Matter
-                </button>
-              </div>
-            </div>
           ) : (
-            // Show all matters when none selected
-            matters.map((matter) => (
-            <div
-              key={matter.id}
-              onClick={() => onMatterSelect(matter)}
-              className="relative bg-white rounded-3xl cursor-pointer transition-all duration-300 hover:shadow-xl shadow-md border border-gray-100 hover:border-gray-200 hover:-translate-y-1"
-              style={{
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300"></div>
-                      <h3 className="font-semibold text-gray-900 text-sm truncate">{matter.title}</h3>
-                    </div>
-                    {matter.description && (
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{matter.description}</p>
-                    )}
-                    <div className="flex items-center gap-2">
-                      {matter.e2eeEnabled && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          🔒 E2EE
-                        </span>
+            <div className="space-y-6">
+              <div className="relative">
+                <label htmlFor="matter-select" className="block text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+                  Selected Matter
+                </label>
+                <div
+                  className={getInputClass('matter-select', !!selectedMatter)}
+                  style={sharedInputStyle}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-900">
+                        {selectedMatter?.title || 'No matter selected'}
+                      </div>
+                      {selectedMatter?.description && (
+                        <div className="text-sm text-slate-600 mt-1">
+                          {selectedMatter.description}
+                        </div>
                       )}
-                      <span className="text-xs text-gray-400">
-                        Created {new Date(matter.createdAt).toLocaleDateString()}
-                      </span>
+                      {selectedMatter && (
+                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-2">
+                          <span className="flex items-center gap-1">
+                            {selectedMatter.e2eeEnabled ? '🔒 E2EE' : '📝'} 
+                            {selectedMatter.e2eeEnabled ? 'Enabled' : 'Standard'}
+                          </span>
+                          <span>
+                            Created {new Date(selectedMatter.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1 ml-3">
-                    <button
-                      onClick={(e) => handleEditClick(e, matter)}
-                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
-                      title="Edit matter"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={(e) => handleDeleteClick(e, matter)}
-                      className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
-                      title="Delete matter"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                      Delete
-                    </button>
+                    {selectedMatter && (
+                      <div className="flex items-center gap-1 ml-3">
+                        <button
+                          onClick={(e) => handleEditClick(e, selectedMatter)}
+                          className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors text-sm"
+                          title="Edit matter"
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteClick(e, selectedMatter)}
+                          className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors text-sm"
+                          title="Delete matter"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
+              
+              {!selectedMatter && (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">Available Matters</h4>
+                  <div className="grid gap-3">{matters.map((matter) => (
+                    <div
+                      key={matter.id}
+                      onClick={() => onMatterSelect(matter)}
+                      className="p-4 bg-white border-2 border-slate-200 rounded-xl cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h5 className="font-medium text-slate-900 truncate">{matter.title}</h5>
+                          {matter.description && (
+                            <p className="text-sm text-slate-600 mt-1 line-clamp-2">{matter.description}</p>
+                          )}
+                          <div className="flex items-center gap-2 mt-2">
+                            {matter.e2eeEnabled && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                🔒 E2EE
+                              </span>
+                            )}
+                            <span className="text-xs text-slate-400">
+                              Created {new Date(matter.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 ml-3">
+                          <button
+                            onClick={(e) => handleEditClick(e, matter)}
+                            className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors text-sm"
+                            title="Edit matter"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDeleteClick(e, matter)}
+                            className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors text-sm"
+                            title="Delete matter"
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}</div>
+                </div>
+              )}
             </div>
-          ))
-        )}
+          )}
         </div>
       )}
     </div>
