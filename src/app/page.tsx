@@ -20,19 +20,6 @@ export default function Home() {
   });
   const [sections, setSections] = useState<OutlineSection[]>(DEPOSITION_SECTIONS);
 
-  // Redirect to sign in if not authenticated
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-grid flex items-center justify-center" style={{backgroundColor: '#f8fafc'}}>
-        <div className="spinner w-8 h-8"></div>
-      </div>
-    );
-  }
-
-  if (status === 'unauthenticated') {
-    redirect('/auth/signin');
-  }
-
   // Update metadata when deposition is selected
   useEffect(() => {
     if (selectedDeposition) {
@@ -47,6 +34,19 @@ export default function Home() {
       });
     }
   }, [selectedDeposition]);
+
+  // Redirect to sign in if not authenticated
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-grid flex items-center justify-center" style={{backgroundColor: '#f8fafc'}}>
+        <div className="spinner w-8 h-8"></div>
+      </div>
+    );
+  }
+
+  if (status === 'unauthenticated') {
+    redirect('/auth/signin');
+  }
 
   const handleGenerateOutline = () => {
     console.log('Generating outline with metadata:', metadata);

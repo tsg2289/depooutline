@@ -42,7 +42,7 @@ export default function VerifyRequest() {
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              <strong>Tip:</strong> Check your spam folder if you don't see the email in your inbox.
+              <strong>Tip:</strong> Check your spam folder if you don&apos;t see the email in your inbox.
             </p>
           </div>
 
