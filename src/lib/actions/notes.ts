@@ -50,8 +50,8 @@ export async function saveNote(
 
     const noteValues = {
       bodyPlain: noteData.body || null,
-      bodyCipher: noteData.bodyCipher ? Buffer.from(noteData.bodyCipher, 'base64') : null,
-      iv: noteData.iv ? Buffer.from(noteData.iv, 'base64') : null,
+      bodyCipher: noteData.bodyCipher || null,
+      iv: noteData.iv || null,
       updatedAt: new Date(),
     };
 

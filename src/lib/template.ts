@@ -1,4 +1,4 @@
-import type { OutlineSection } from '@/types';
+import type { OutlineSection, CaseMetadata } from '@/types';
 
 export const DEPOSITION_SECTIONS: OutlineSection[] = [
   {
@@ -4898,7 +4898,7 @@ export const DEPOSITION_SECTIONS: OutlineSection[] = [
   }
 ];
 
-export const generateOutlineMarkdown = (sections: OutlineSection[], metadata: any): string => {
+export const generateOutlineMarkdown = (sections: OutlineSection[], metadata: CaseMetadata): string => {
   const header = `# ${metadata.caseName}
 **Case No.:** ${metadata.caseNumber}
 **Jurisdiction:** ${metadata.jurisdiction}

@@ -54,8 +54,8 @@ export async function saveCustomQuestions(
         sectionId,
         orderIndex: index,
         textPlain: question.text || null,
-        textCipher: question.textCipher ? Buffer.from(question.textCipher, 'base64') : null,
-        iv: question.iv ? Buffer.from(question.iv, 'base64') : null,
+        textCipher: question.textCipher || null,
+        iv: question.iv || null,
       }));
 
       await db.insert(customQuestions).values(questionsToInsert);

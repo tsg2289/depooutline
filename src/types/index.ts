@@ -33,7 +33,7 @@ export interface Matter {
   id: string;
   userId: string;
   title: string;
-  description?: string;
+  description: string | null;
   e2eeEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -44,12 +44,12 @@ export interface Deposition {
   matterId: string;
   title: string;
   deponentName: string;
-  date?: Date;
-  caseName?: string;
-  caseNumber?: string;
-  jurisdiction?: string;
-  takingAttorney?: string;
-  defendingAttorney?: string;
+  date: Date | null;
+  caseName: string | null;
+  caseNumber: string | null;
+  jurisdiction: string | null;
+  takingAttorney: string | null;
+  defendingAttorney: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
